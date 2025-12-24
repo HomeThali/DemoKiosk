@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Customer Details - HomeThali</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* ================= BODY ================= */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+}
+
+/* ================= TOP BAR ================= */
+.topbar {
+    height: 70px;
+    background: #4CAF50;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+}
+
+.brand {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* ================= STEP BAR ================= */
+.step-wrapper {
+    background: #f5f7fa;
+    padding: 30px 20px;
+}
+
+.progress-bar {
+    position: relative;
+    max-width: 700px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-bar::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #dcdcdc;
+    transform: translateY(-50%);
+}
+
+.progress-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 4px;
+    background: #4CAF50;
+    transform: translateY(-50%);
+    width: 0%;
+}
+
+.step-circle {
+    width: 42px;
+    height: 42px;
+    background: white;
+    border: 3px solid #dcdcdc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #aaa;
+    z-index: 2;
+}
+
+.step-circle.active {
+    border-color: #4CAF50;
+    color: #4CAF50;
+}
+
+.step-circle {
+    cursor: pointer;
+}
+
+.step-circle.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+
+/* ================= FORM CARD ================= */
+.page-content {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.card {
+    background: white;
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 30px;
+    color: #4CAF50;
+}
+
+input {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button {
+    width: 100%;
+    padding: 18px;
+    font-size: 22px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+    <div class="brand">HomeThali</div>
+</div>
+
+<!-- STEP BAR (5 STEPS) -->
+<div class="step-wrapper">
+    
+
+    <div class="progress-bar">
+        <div class="progress-line" id="progressLine"></div>
+
+        <div class="step-circle active" data-step="1">1</div>
+<div class="step-circle" data-step="2">2</div>
+<div class="step-circle" data-step="3">3</div>
+<div class="step-circle" data-step="4">4</div>
+<div class="step-circle" data-step="5">5</div>
+
+    </div>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="page-content">
+    <div class="card">
+        <h2>Enter Your Details</h2>
+
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="tel" id="phone" placeholder="Phone Number" required>
+        <input type="text" id="room" placeholder="Room Number" required>
+
+        <button onclick="saveDetails()">Continue</button>
+    </div>
+</div>
+
+<script>
+/* STEP CONTROL */
+const currentStep = 1; // Details page
+const totalSteps = 5;
+
+const progressPercent = ((currentStep - 1) / (totalSteps - 1)) * 100;
+document.getElementById("progressLine").style.width = progressPercent + "%";
+
+
+/* -------- STEP CONFIG -------- */
+const stepPages = {
+    1: "customer_detail.html",
+    2: "menu.html",
+    3: "cart.html",
+    4: "payment.html",
+    5: "success.html"
+};
+
+/* -------- SET CURRENT STEP PER PAGE -------- */
+// EXAMPLES:
+// customer_detail.html → const currentStep = 1;
+// menu.html           → const currentStep = 2;
+// cart.html           → const currentStep = 3;
+// payment.html        → const currentStep = 4;
+// success.html        → const currentStep = 5;
+
+/* -------- CLICKABLE STEP LOGIC -------- */
+document.querySelectorAll(".step-circle").forEach(stepEl => {
+    const stepNum = parseInt(stepEl.dataset.step);
+
+    if (stepNum <= currentStep) {
+        // Previous or current step → clickable
+        stepEl.classList.remove("disabled");
+
+        stepEl.addEventListener("click", () => {
+            if (stepNum !== currentStep) {
+                window.location.href = stepPages[stepNum];
+            }
+        });
+    } else {
+        // Future step → disabled
+        stepEl.classList.add("disabled");
+    }
+});
+
+
+// Prefill data if user comes back
+document.getElementById("name").value =
+    localStorage.getItem("customer_name") || "";
+
+document.getElementById("phone").value =
+    localStorage.getItem("customer_phone") || "";
+
+document.getElementById("room").value =
+    localStorage.getItem("room_number") || "";
+
+
+/* SAVE DETAILS */
+function saveDetails() {
+    const name  = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const room  = document.getElementById('room').value.trim();
+
+    if (!name || !phone || !room) {
+        alert("Please fill all details");
+        return;
+    }
+
+    localStorage.setItem("customer_name", name);
+    localStorage.setItem("customer_phone", phone);
+    localStorage.setItem("room_number", room);
+
+    window.location.href = "menu.html";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Order Successful - HomeThali</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* ================= BODY ================= */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+}
+
+/* ================= TOP BAR ================= */
+.topbar {
+    height: 70px;
+    background: #4CAF50;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+}
+
+.brand {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#topCustomer {
+    font-size: 18px;
+}
+
+/* ================= STEP BAR ================= */
+.step-wrapper {
+    background: #f5f7fa;
+    padding: 30px 20px;
+}
+
+.progress-bar {
+    position: relative;
+    max-width: 700px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-bar::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #dcdcdc;
+    transform: translateY(-50%);
+}
+
+.progress-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 4px;
+    background: #4CAF50;
+    transform: translateY(-50%);
+    width: 100%;
+}
+
+.step-circle {
+    width: 42px;
+    height: 42px;
+    background: white;
+    border: 3px solid #dcdcdc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #aaa;
+    z-index: 2;
+}
+
+.step-circle.active {
+    border-color: #4CAF50;
+    color: #4CAF50;
+}
+
+/* ================= SUCCESS CONTENT ================= */
+.page-content {
+    height: calc(100vh - 160px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    background: white;
+    color: #333;
+    padding: 40px;
+    border-radius: 16px;
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+}
+
+.card h1 {
+    color: #4CAF50;
+    margin-bottom: 10px;
+}
+
+.token {
+    font-size: 40px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #4CAF50;
+}
+
+.details {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+
+.home-btn {
+    margin-top: 20px;
+    padding: 14px 30px;
+    font-size: 20px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.home-btn:active {
+    transform: scale(0.97);
+}
+
+.timer {
+    margin-top: 20px;
+    font-size: 16px;
+    opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= TOP BAR ================= -->
+<div class="topbar">
+    <div class="brand">HomeThali </div>
+    <div id="topCustomer"></div>
+</div>
+
+<!-- ================= STEP BAR (5 STEPS) ================= -->
+<div class="step-wrapper">
+    <div class="progress-bar">
+        <div class="progress-line"></div>
+        <div class="step-circle">1</div>
+        <div class="step-circle">2</div>
+        <div class="step-circle">3</div>
+        <div class="step-circle">4</div>
+        <div class="step-circle active">5</div>
+    </div>
+</div>
+
+<!-- ================= PAGE CONTENT ================= -->
+<div class="page-content">
+
+    <div class="card">
+        <h1>Order Placed Successfully 🎉</h1>
+        <p>Please note your token number</p>
+
+        <div class="token" id="tokenNo">HT001</div>
+
+        <div class="details">
+            <strong id="custName"></strong><br>
+            Room: <span id="custRoom"></span><br>
+            Payment: <span id="paymentMethod"></span>
+        </div>
+
+        <button class="home-btn" onclick="goHome()">
+    Go to Home
+</button>
+
+
+        <div class="timer">
+            Redirecting to home in <span id="countdown">30</span> seconds…
+        </div>
+    </div>
+
+</div>
+
+<script>
+/* ================= CUSTOMER DETAILS ================= */
+const cname = localStorage.getItem("customer_name");
+if (cname) {
+    document.getElementById("topCustomer").innerText = cname;
+    document.getElementById("custName").innerText = cname;
+} else {
+    document.getElementById("custName").innerText = "Customer";
+}
+
+document.getElementById("custRoom").innerText =
+    localStorage.getItem("room_number") || "-";
+
+document.getElementById("paymentMethod").innerText =
+    localStorage.getItem("payment_method") || "-";
+
+/* ================= TOKEN ================= */
+const token = "HT" + Math.floor(100 + Math.random() * 900);
+document.getElementById("tokenNo").innerText = token;
+
+
+function goHome() {
+    // Clear kiosk data
+    localStorage.removeItem("cart");
+    localStorage.removeItem("payment_method");
+    localStorage.removeItem("customer_name");
+    localStorage.removeItem("customer_phone");
+    localStorage.removeItem("room_number");
+
+    // Go to home screen
+    window.location.href = "index.html";
+}
+
+
+
+/* ================= AUTO RESET ================= */
+let timeLeft = 30;
+const timer = document.getElementById("countdown");
+
+const interval = setInterval(() => {
+    timeLeft--;
+    timer.innerText = timeLeft;
+
+    if (timeLeft <= 0) {
+        clearInterval(interval);
+
+        localStorage.removeItem("cart");
+        localStorage.removeItem("payment_method");
+        localStorage.removeItem("customer_name");
+        localStorage.removeItem("customer_phone");
+        localStorage.removeItem("room_number");
+
+        window.location.href = "index.html";
+    }
+}, 1000);
+</script>
+
+</body>
+</html>

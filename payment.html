@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Payment - HomeThali</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* ================= BODY ================= */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+}
+
+/* ================= TOP BAR ================= */
+.topbar {
+    height: 70px;
+    background: #4CAF50;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+}
+
+.brand {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#topCustomer {
+    font-size: 18px;
+}
+
+/* ================= STEP BAR ================= */
+.step-wrapper {
+    background: #f5f7fa;
+    padding: 30px 20px;
+}
+
+.progress-bar {
+    position: relative;
+    max-width: 700px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-bar::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #dcdcdc;
+    transform: translateY(-50%);
+}
+
+.progress-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 4px;
+    background: #4CAF50;
+    transform: translateY(-50%);
+    width: 75%;
+}
+
+.step-circle {
+    width: 42px;
+    height: 42px;
+    background: white;
+    border: 3px solid #dcdcdc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #aaa;
+    z-index: 2;
+}
+
+.step-circle.active {
+    border-color: #4CAF50;
+    color: #4CAF50;
+}
+
+.step-circle {
+    cursor: pointer;
+}
+
+.step-circle.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ================= PAGE CONTENT ================= */
+.page-content {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* ================= CARD ================= */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.customer {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.total {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+/* ================= PAYMENT OPTIONS ================= */
+.pay-options {
+    display: flex;
+    gap: 20px;
+}
+
+.pay-option {
+    flex: 1;
+    padding: 20px;
+    border: 2px solid #4CAF50;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.pay-option:active {
+    transform: scale(0.97);
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= TOP BAR ================= -->
+<div class="topbar">
+    <div class="brand">HomeThali </div>
+    <div id="topCustomer"></div>
+</div>
+
+<!-- ================= STEP BAR (5 STEPS) ================= -->
+<div class="step-wrapper">
+    <div class="progress-bar">
+        <div class="progress-line" id="progressLine"></div>
+        <div class="step-circle" data-step="1">1</div>
+<div class="step-circle" data-step="2">2</div>
+<div class="step-circle" data-step="3">3</div>
+<div class="step-circle active" data-step="4">4</div>
+<div class="step-circle" data-step="5">5</div>
+
+    </div>
+</div>
+
+<!-- ================= PAGE CONTENT ================= -->
+<div class="page-content">
+
+    <!-- CUSTOMER INFO -->
+    <div class="card">
+        <div class="customer">
+            <strong id="custName"></strong><br>
+            Room: <span id="custRoom"></span>
+        </div>
+        <div class="total">
+            Total: ₹ <span id="totalAmount">0</span>
+        </div>
+    </div>
+
+    <!-- PAYMENT OPTIONS -->
+    <div class="card">
+        <h3>Select Payment Method</h3>
+
+        <div class="pay-options">
+            <div class="pay-option" onclick="selectPayment('UPI')">
+                UPI
+            </div>
+            <div class="pay-option" onclick="selectPayment('CASH')">
+                Cash
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+/* ================= STEP CONTROL ================= */
+const currentStep = 4;
+const totalSteps = 5;
+
+document.getElementById("progressLine").style.width =
+    ((currentStep - 1) / (totalSteps - 1)) * 100 + "%";
+
+/* -------- STEP CONFIG -------- */
+const stepPages = {
+    1: "customer_detail.html",
+    2: "menu.html",
+    3: "cart.html",
+    4: "payment.html",
+    5: "success.html"
+};
+
+/* -------- SET CURRENT STEP PER PAGE -------- */
+// EXAMPLES:
+// customer_detail.html → const currentStep = 1;
+// menu.html           → const currentStep = 2;
+// cart.html           → const currentStep = 3;
+// payment.html        → const currentStep = 4;
+// success.html        → const currentStep = 5;
+
+/* -------- CLICKABLE STEP LOGIC -------- */
+document.querySelectorAll(".step-circle").forEach(stepEl => {
+    const stepNum = parseInt(stepEl.dataset.step);
+
+    if (stepNum <= currentStep) {
+        // Previous or current step → clickable
+        stepEl.classList.remove("disabled");
+
+        stepEl.addEventListener("click", () => {
+            if (stepNum !== currentStep) {
+                window.location.href = stepPages[stepNum];
+            }
+        });
+    } else {
+        // Future step → disabled
+        stepEl.classList.add("disabled");
+    }
+});
+
+/* ================= CUSTOMER DETAILS ================= */
+const cname = localStorage.getItem("customer_name");
+if (cname) {
+    document.getElementById("topCustomer").innerText = cname;
+    document.getElementById("custName").innerText = cname;
+}
+
+document.getElementById("custRoom").innerText =
+    localStorage.getItem("room_number") || "-";
+
+/* ================= TOTAL AMOUNT ================= */
+const cart = JSON.parse(localStorage.getItem("cart")) || {};
+let total = 0;
+for (let id in cart) {
+    total += cart[id].qty * cart[id].price;
+}
+document.getElementById("totalAmount").innerText = total;
+
+/* ================= PAYMENT ================= */
+function selectPayment(method) {
+    localStorage.setItem("payment_method", method);
+    window.location.href = "success.html";
+}
+
+const savedMethod = localStorage.getItem("payment_method");
+if (savedMethod) {
+    // Later you can highlight the selected option
+    console.log("Previously selected:", savedMethod);
+}
+
+</script>
+
+</body>
+</html>

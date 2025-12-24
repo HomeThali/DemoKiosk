@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HomeThali Kiosk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #84D160, #4CAF50);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+    }
+
+    .container {
+        text-align: center;
+    }
+
+    .logo {
+        width: 140px;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 48px;
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 20px;
+        margin-bottom: 40px;
+    }
+
+    .start-btn {
+        background: white;
+        color: #4CAF50;
+        font-size: 32px;
+        padding: 20px 60px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .start-btn:active {
+        transform: scale(0.95);
+    }
+
+    .hint {
+        margin-top: 20px;
+        font-size: 16px;
+        opacity: 0.9;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <img src="assets/img/LogoMain.png" alt="HomeThali Logo" class="logo">
+
+    <h1>HomeThali </h1>
+    <p>Healthy Home-Cooked Meals</p>
+
+    <button class="start-btn" onclick="startOrder()">
+        START ORDER
+    </button>
+
+    <div class="hint">Touch the screen to begin</div>
+</div>
+
+<script>
+function startOrder() {
+    window.location.href = "customer_detail.html";
+}
+</script>
+
+</body>
+</html>

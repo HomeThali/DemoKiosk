@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cart - HomeThali</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* ================= BODY ================= */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+}
+
+/* ================= TOP BAR ================= */
+.topbar {
+    height: 70px;
+    background: #4CAF50;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+}
+
+.brand {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#topCustomer {
+    font-size: 18px;
+}
+
+/* ================= STEP BAR ================= */
+.step-wrapper {
+    background: #f5f7fa;
+    padding: 30px 20px;
+}
+
+.progress-bar {
+    position: relative;
+    max-width: 700px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-bar::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #dcdcdc;
+    transform: translateY(-50%);
+}
+
+.progress-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 4px;
+    background: #4CAF50;
+    transform: translateY(-50%);
+    width: 50%;
+}
+
+.step-circle {
+    width: 42px;
+    height: 42px;
+    background: white;
+    border: 3px solid #dcdcdc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #aaa;
+    z-index: 2;
+}
+
+.step-circle.active {
+    border-color: #4CAF50;
+    color: #4CAF50;
+}
+
+.step-circle {
+    cursor: pointer;
+}
+
+.step-circle.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ================= PAGE CONTENT ================= */
+.page-content {
+    padding: 20px;
+    max-width: 900px;
+    margin: auto;
+}
+
+/* ================= CUSTOMER INFO ================= */
+.customer-info {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* ================= CART ITEMS ================= */
+.cart-item {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.item-left {
+    flex: 2;
+}
+
+.item-right {
+    flex: 1;
+    text-align: right;
+}
+
+.qty-control {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.qty-control button {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* ================= FOOTER ================= */
+.footer {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.footer button {
+    width: 100%;
+    padding: 18px;
+    font-size: 22px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= TOP BAR ================= -->
+<div class="topbar">
+    <div class="brand">HomeThali </div>
+    <div id="topCustomer"></div>
+</div>
+
+<!-- ================= STEP BAR (5 STEPS) ================= -->
+<div class="step-wrapper">
+    <div class="progress-bar">
+        <div class="progress-line" id="progressLine"></div>
+        <div class="step-circle" data-step="1">1</div>
+<div class="step-circle" data-step="2">2</div>
+<div class="step-circle active" data-step="3">3</div>
+<div class="step-circle" data-step="4">4</div>
+<div class="step-circle" data-step="5">5</div>
+
+    </div>
+</div>
+
+<!-- ================= PAGE CONTENT ================= -->
+<div class="page-content">
+
+    <!-- CUSTOMER DETAILS -->
+    <div class="customer-info">
+        <strong id="custName"></strong><br>
+        Phone: <span id="custPhone"></span><br>
+        Room: <span id="custRoom"></span>
+    </div>
+
+    <!-- CART ITEMS -->
+    <div id="cartItems"></div>
+
+    <!-- TOTAL + NEXT -->
+    <div class="footer">
+        <h2>Total: ₹ <span id="grandTotal">0</span></h2>
+        <button onclick="goToPayment()">Proceed to Payment</button>
+    </div>
+
+</div>
+
+<script>
+/* ================= STEP CONTROL ================= */
+const currentStep = 3;
+const totalSteps = 5;
+
+document.getElementById("progressLine").style.width =
+    ((currentStep - 1) / (totalSteps - 1)) * 100 + "%";
+
+/* ================= CUSTOMER DETAILS ================= */
+const cname = localStorage.getItem("customer_name");
+if (cname) {
+    document.getElementById("topCustomer").innerText = cname;
+    document.getElementById("custName").innerText = "Customer: " + cname;
+}
+
+document.getElementById("custPhone").innerText =
+    localStorage.getItem("customer_phone") || "-";
+document.getElementById("custRoom").innerText =
+    localStorage.getItem("room_number") || "-";
+
+/* ================= CART LOGIC ================= */
+let cart = JSON.parse(localStorage.getItem("cart")) || {};
+const cartDiv = document.getElementById("cartItems");
+
+function renderCart() {
+    cartDiv.innerHTML = "";
+    let total = 0;
+
+    if (!Object.keys(cart).length) {
+        cartDiv.innerHTML = "<p>Your cart is empty.</p>";
+        document.getElementById("grandTotal").innerText = 0;
+        return;
+    }
+
+    for (let id in cart) {
+        const item = cart[id];
+        const itemTotal = item.qty * item.price;
+        total += itemTotal;
+
+        cartDiv.innerHTML += `
+            <div class="cart-item">
+                <div class="item-left">
+                    <strong>${item.name}</strong><br>
+                    ₹${item.price} × ${item.qty}
+                    <div class="qty-control">
+                        <button onclick="updateQty(${id}, -1)">−</button>
+                        <span>${item.qty}</span>
+                        <button onclick="updateQty(${id}, 1)">+</button>
+                    </div>
+                </div>
+                <div class="item-right">
+                    ₹${itemTotal}
+                </div>
+            </div>
+        `;
+    }
+
+    document.getElementById("grandTotal").innerText = total;
+}
+
+function updateQty(id, change) {
+    cart[id].qty += change;
+    if (cart[id].qty <= 0) delete cart[id];
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    renderCart();
+}
+
+/* -------- STEP CONFIG -------- */
+const stepPages = {
+    1: "customer_detail.html",
+    2: "menu.html",
+    3: "cart.html",
+    4: "payment.html",
+    5: "success.html"
+};
+
+/* -------- SET CURRENT STEP PER PAGE -------- */
+// EXAMPLES:
+// customer_detail.html → const currentStep = 1;
+// menu.html           → const currentStep = 2;
+// cart.html           → const currentStep = 3;
+// payment.html        → const currentStep = 4;
+// success.html        → const currentStep = 5;
+
+/* -------- CLICKABLE STEP LOGIC -------- */
+document.querySelectorAll(".step-circle").forEach(stepEl => {
+    const stepNum = parseInt(stepEl.dataset.step);
+
+    if (stepNum <= currentStep) {
+        // Previous or current step → clickable
+        stepEl.classList.remove("disabled");
+
+        stepEl.addEventListener("click", () => {
+            if (stepNum !== currentStep) {
+                window.location.href = stepPages[stepNum];
+            }
+        });
+    } else {
+        // Future step → disabled
+        stepEl.classList.add("disabled");
+    }
+});
+function goToPayment() {
+    if (!Object.keys(cart).length) {
+        alert("Cart is empty");
+        return;
+    }
+    window.location.href = "payment.html";
+}
+
+renderCart();
+</script>
+
+</body>
+</html>
