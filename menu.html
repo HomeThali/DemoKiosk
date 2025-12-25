@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* ================= BODY ================= */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -19,7 +18,6 @@ body {
     background: #4CAF50;
     color: white;
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 0 24px;
 }
@@ -27,10 +25,6 @@ body {
 .brand {
     font-size: 24px;
     font-weight: bold;
-}
-
-#topCustomer {
-    font-size: 18px;
 }
 
 /* ================= STEP BAR ================= */
@@ -41,11 +35,10 @@ body {
 
 .progress-bar {
     position: relative;
-    max-width: 700px;
+    max-width: 600px;
     margin: auto;
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
 .progress-bar::before {
@@ -66,7 +59,7 @@ body {
     height: 4px;
     background: #4CAF50;
     transform: translateY(-50%);
-    width: 25%;
+    width: 0%;
 }
 
 .step-circle {
@@ -80,7 +73,6 @@ body {
     justify-content: center;
     font-weight: bold;
     color: #aaa;
-    z-index: 2;
 }
 
 .step-circle.active {
@@ -88,21 +80,11 @@ body {
     color: #4CAF50;
 }
 
-.step-circle {
-    cursor: pointer;
-}
-
-.step-circle.disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
 /* ================= PAGE CONTENT ================= */
 .page-content {
     height: calc(100vh - 160px);
 }
 
-/* ================= MAIN LAYOUT ================= */
 .container {
     display: flex;
     height: 100%;
@@ -166,21 +148,8 @@ body {
     flex-direction: column;
 }
 
-.cart h3 {
-    margin-top: 0;
-    color: #4CAF50;
-}
-
 .cart-items {
     flex: 1;
-    overflow-y: auto;
-}
-
-.cart-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    font-size: 16px;
 }
 
 .cart-total {
@@ -196,70 +165,101 @@ body {
     color: white;
     border: none;
     border-radius: 10px;
-    cursor: pointer;
+}
+
+/* ================= MODAL ================= */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+}
+
+.modal-box {
+    background: white;
+    width: 90%;
+    max-width: 420px;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.modal-box h2 {
+    color: #4CAF50;
+}
+
+.modal-box input {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+}
+
+.modal-box button {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 10px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ================= TOP BAR ================= -->
 <div class="topbar">
-    <div class="brand">HomeThali </div>
-    <div id="topCustomer"></div>
+    <div class="brand">HomeThali</div>
 </div>
 
-<!-- ================= STEP BAR (5 STEPS) ================= -->
 <div class="step-wrapper">
     <div class="progress-bar">
-        <div class="progress-line" id="progressLine"></div>
-        <div class="step-circle" data-step="1">1</div>
-<div class="step-circle active" data-step="2">2</div>
-<div class="step-circle" data-step="3">3</div>
-<div class="step-circle" data-step="4">4</div>
-<div class="step-circle" data-step="5">5</div>
-
+        <div class="progress-line"></div>
+        <div class="step-circle active">1</div>
+        <div class="step-circle">2</div>
+        <div class="step-circle">3</div>
+        <div class="step-circle">4</div>
     </div>
 </div>
 
-<!-- ================= PAGE CONTENT ================= -->
 <div class="page-content">
 <div class="container">
 
-    <!-- MENU -->
     <div class="menu" id="menu"></div>
 
-    <!-- CART -->
     <div class="cart">
-        <h3 id="customerName">Your Cart</h3>
-        <div class="cart-items" id="cartItems">
-            <p>No items added</p>
-        </div>
+        <h3>Your Cart</h3>
+        <div class="cart-items" id="cartItems"></div>
         <div class="cart-total">
             Total: ₹ <span id="totalPrice">0</span>
         </div>
-        <button onclick="goToCart()">Next</button>
+        <button onclick="openCustomerModal()">Next</button>
     </div>
 
 </div>
 </div>
 
+<!-- ================= CUSTOMER DETAILS + OTP MODAL ================= -->
+<div class="modal" id="customerModal">
+  <div class="modal-box">
+    <h2>Customer Details</h2>
+
+    <input id="custName" placeholder="Full Name">
+    <input id="custPhone" placeholder="Phone Number">
+    <input id="custRoom" placeholder="Room Number">
+
+    <input id="custOTP" placeholder="Enter OTP" style="display:none;">
+
+    <button id="saveBtn" onclick="saveCustomer()">Send OTP</button>
+    <button id="verifyBtn" onclick="verifyOTP()" style="display:none;">
+        Verify OTP
+    </button>
+  </div>
+</div>
+
 <script>
-/* ================= STEP CONTROL ================= */
-const currentStep = 2;
-const totalSteps = 5;
-
-document.getElementById("progressLine").style.width =
-    ((currentStep - 1) / (totalSteps - 1)) * 100 + "%";
-
-/* ================= CUSTOMER NAME ================= */
-const customerName = localStorage.getItem("customer_name");
-if (customerName) {
-    document.getElementById("topCustomer").innerText = customerName;
-    document.getElementById("customerName").innerText = "Customer: " + customerName;
-}
-
-/* ================= MENU DATA ================= */
 const dishes = [
     { id: 1, name: "Idly", price: 40, img: "assets/img/idly.jpg" },
     { id: 2, name: "Meals", price: 120, img: "assets/img/meals.jpg" },
@@ -273,108 +273,88 @@ let cart = JSON.parse(localStorage.getItem("cart")) || {};
 const menuDiv = document.getElementById("menu");
 
 /* ================= RENDER MENU ================= */
-dishes.forEach(dish => {
-    const qty = cart[dish.id]?.qty || 0;
-
+dishes.forEach(d => {
     const div = document.createElement("div");
     div.className = "item";
     div.innerHTML = `
-        <img src="${dish.img}">
-        <h3>${dish.name}</h3>
-        <div class="price">₹${dish.price}</div>
+        <img src="${d.img}">
+        <h3>${d.name}</h3>
+        <div class="price">₹${d.price}</div>
         <div class="qty-control">
-            <button onclick="updateQty(${dish.id}, -1)">−</button>
-            <div>${qty}</div>
-            <button onclick="updateQty(${dish.id}, 1)">+</button>
-        </div>
-    `;
+            <button onclick="updateQty(${d.id}, -1)">−</button>
+            <span>${cart[d.id]?.qty || 0}</span>
+            <button onclick="updateQty(${d.id}, 1)">+</button>
+        </div>`;
     menuDiv.appendChild(div);
 });
 
-/* ================= UPDATE QTY ================= */
-function updateQty(id, change) {
-    const dish = dishes.find(d => d.id === id);
-    if (!cart[id]) cart[id] = { ...dish, qty: 0 };
-
-    cart[id].qty += change;
+function updateQty(id, c) {
+    const d = dishes.find(x => x.id === id);
+    if (!cart[id]) cart[id] = {...d, qty:0};
+    cart[id].qty += c;
     if (cart[id].qty <= 0) delete cart[id];
-
     localStorage.setItem("cart", JSON.stringify(cart));
     renderCart();
 }
 
-
-/* ================= RENDER CART ================= */
 function renderCart() {
-    const cartDiv = document.getElementById("cartItems");
+    const c = document.getElementById("cartItems");
     let total = 0;
-    cartDiv.innerHTML = "";
-
+    c.innerHTML = "";
     for (let id in cart) {
-        const item = cart[id];
-        total += item.qty * item.price;
-
-        cartDiv.innerHTML += `
-            <div class="cart-item">
-                <span>${item.name} × ${item.qty}</span>
-                <span>₹${item.qty * item.price}</span>
-            </div>
-        `;
+        total += cart[id].qty * cart[id].price;
+        c.innerHTML += `<div>${cart[id].name} × ${cart[id].qty}</div>`;
     }
-
-    if (!Object.keys(cart).length) {
-        cartDiv.innerHTML = "<p>No items added</p>";
-    }
-
     document.getElementById("totalPrice").innerText = total;
 }
 
-/* -------- STEP CONFIG -------- */
-const stepPages = {
-    1: "customer_detail.html",
-    2: "menu.html",
-    3: "cart.html",
-    4: "payment.html",
-    5: "success.html"
-};
-
-/* -------- SET CURRENT STEP PER PAGE -------- */
-// EXAMPLES:
-// customer_detail.html → const currentStep = 1;
-// menu.html           → const currentStep = 2;
-// cart.html           → const currentStep = 3;
-// payment.html        → const currentStep = 4;
-// success.html        → const currentStep = 5;
-
-/* -------- CLICKABLE STEP LOGIC -------- */
-document.querySelectorAll(".step-circle").forEach(stepEl => {
-    const stepNum = parseInt(stepEl.dataset.step);
-
-    if (stepNum <= currentStep) {
-        // Previous or current step → clickable
-        stepEl.classList.remove("disabled");
-
-        stepEl.addEventListener("click", () => {
-            if (stepNum !== currentStep) {
-                window.location.href = stepPages[stepNum];
-            }
-        });
-    } else {
-        // Future step → disabled
-        stepEl.classList.add("disabled");
-    }
-});
-
-renderCart();
-
-/* ================= NEXT ================= */
-function goToCart() {
+/* ================= OTP FLOW ================= */
+function openCustomerModal() {
     if (!Object.keys(cart).length) {
-        alert("Please add items");
+        alert("Add items first");
         return;
     }
+
+    // ✅ Skip popup if OTP already verified
+    if (localStorage.getItem("otp_verified") === "true") {
+        window.location.href = "cart.html";
+        return;
+    }
+
+    customerModal.style.display = "block";
+    custName.value  = localStorage.getItem("customer_name") || "";
+    custPhone.value = localStorage.getItem("customer_phone") || "";
+    custRoom.value  = localStorage.getItem("room_number") || "";
+}
+
+function saveCustomer() {
+    if (!custName.value || !custPhone.value || !custRoom.value) {
+        alert("Fill all details");
+        return;
+    }
+
+    localStorage.setItem("customer_name", custName.value);
+    localStorage.setItem("customer_phone", custPhone.value);
+    localStorage.setItem("room_number", custRoom.value);
+
+    alert("OTP sent (demo OTP: 1234)");
+
+    custOTP.style.display = "block";
+    verifyBtn.style.display = "block";
+    saveBtn.style.display = "none";
+}
+
+function verifyOTP() {
+    if (custOTP.value !== "1234") {
+        alert("Invalid OTP");
+        return;
+    }
+
+    localStorage.setItem("otp_verified", "true");
     window.location.href = "cart.html";
 }
+
+renderCart();
 </script>
 
 </body>
