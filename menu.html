@@ -6,6 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+/* ================= GLOBAL RESET ================= */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -34,53 +41,33 @@ body {
 }
 
 .progress-bar {
-    position: relative;
     max-width: 600px;
     margin: auto;
     display: flex;
     justify-content: space-between;
 }
 
-.progress-bar::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: #dcdcdc;
-    transform: translateY(-50%);
-}
-
-.progress-line {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    height: 4px;
-    background: #4CAF50;
-    transform: translateY(-50%);
-    width: 0%;
-}
-
 .step-circle {
     width: 42px;
     height: 42px;
+    border-radius: 50%;
     background: white;
     border: 3px solid #dcdcdc;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
     color: #aaa;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-.step-circle.active {
+.step-circle.active,
+.step-circle:hover {
     border-color: #4CAF50;
     color: #4CAF50;
 }
 
-/* ================= PAGE CONTENT ================= */
+/* ================= LAYOUT ================= */
 .page-content {
     height: calc(100vh - 160px);
 }
@@ -104,8 +91,8 @@ body {
     background: white;
     padding: 15px;
     border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .item img {
@@ -118,7 +105,7 @@ body {
 .price {
     color: #4CAF50;
     font-size: 18px;
-    margin: 8px 0;
+    margin: 6px 0;
 }
 
 .qty-control {
@@ -127,21 +114,26 @@ body {
     gap: 15px;
 }
 
+.qty-control span {
+    font-size: 18px;
+    min-width: 20px;
+}
+
 .qty-control button {
     width: 40px;
     height: 40px;
     font-size: 22px;
-    border: none;
     background: #4CAF50;
     color: white;
+    border: none;
     border-radius: 8px;
     cursor: pointer;
 }
 
-/* ================= CART PANEL ================= */
+/* ================= CART ================= */
 .cart {
     flex: 1;
-    background: #fff;
+    background: white;
     padding: 20px;
     border-left: 2px solid #eee;
     display: flex;
@@ -154,8 +146,8 @@ body {
 
 .cart-total {
     font-size: 20px;
-    margin: 15px 0;
     font-weight: bold;
+    margin: 15px 0;
 }
 
 .cart button {
@@ -165,46 +157,120 @@ body {
     color: white;
     border: none;
     border-radius: 10px;
+    cursor: pointer;
 }
 
-/* ================= MODAL ================= */
+/* ================= MODAL OVERLAY ================= */
 .modal {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.65);
     z-index: 1000;
+    backdrop-filter: blur(4px);
 }
 
+/* ================= MODAL BOX ================= */
 .modal-box {
     background: white;
-    width: 90%;
+    width: 92%;
     max-width: 420px;
-    margin: 10% auto;
-    padding: 25px;
-    border-radius: 12px;
-    text-align: center;
+    padding: 28px;
+    border-radius: 18px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+    animation: popIn 0.25s ease;
 }
 
+@keyframes popIn {
+    from {
+        transform: translate(-50%, -55%) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* ================= MODAL HEADER ================= */
 .modal-box h2 {
+    margin-top: 0;
+    margin-bottom: 6px;
     color: #4CAF50;
 }
 
-.modal-box input {
-    width: 100%;
-    padding: 14px;
-    margin: 10px 0;
+.modal-sub {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 18px;
 }
 
-.modal-box button {
+/* ================= INPUT GROUP ================= */
+.input-group {
+    margin-bottom: 14px;
+}
+
+.input-group input {
+    width: 100%;
+    max-width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1.5px solid #ddd;
+    outline: none;
+    background: #f7fbff;
+}
+
+.input-group input:focus {
+    border-color: #4CAF50;
+}
+
+/* ================= OTP INPUT ================= */
+#custOTP {
+    letter-spacing: 6px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    background: #ffffff;
+}
+
+/* ================= BUTTONS ================= */
+.modal-btn {
     width: 100%;
     padding: 16px;
     font-size: 18px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.primary-btn {
     background: #4CAF50;
     color: white;
-    border: none;
-    border-radius: 10px;
 }
+
+.secondary-btn {
+    background: #e8f5e9;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+/* ================= CLOSE BUTTON ================= */
+.close-btn {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-size: 22px;
+    cursor: pointer;
+    color: #888;
+}
+
+
 </style>
 </head>
 
@@ -214,11 +280,11 @@ body {
     <div class="brand">HomeThali</div>
 </div>
 
+<!-- STEP BAR -->
 <div class="step-wrapper">
     <div class="progress-bar">
-        <div class="progress-line"></div>
-        <div class="step-circle active">1</div>
-        <div class="step-circle">2</div>
+        <div class="step-circle active" onclick="goStep(1)">1</div>
+        <div class="step-circle" onclick="goStep(2)">2</div>
         <div class="step-circle">3</div>
         <div class="step-circle">4</div>
     </div>
@@ -235,31 +301,53 @@ body {
         <div class="cart-total">
             Total: ₹ <span id="totalPrice">0</span>
         </div>
-        <button onclick="openCustomerModal()">Next</button>
+        <button onclick="handleNext()">Next</button>
     </div>
 
 </div>
 </div>
 
-<!-- ================= CUSTOMER DETAILS + OTP MODAL ================= -->
+<!-- CUSTOMER + OTP MODAL -->
 <div class="modal" id="customerModal">
   <div class="modal-box">
+
+    <span class="close-btn" onclick="closeModal()">✕</span>
+
     <h2>Customer Details</h2>
+    <div class="modal-sub">
+        Enter details to continue your order
+    </div>
 
-    <input id="custName" placeholder="Full Name">
-    <input id="custPhone" placeholder="Phone Number">
-    <input id="custRoom" placeholder="Room Number">
+    <div class="input-group">
+        <input id="custName" placeholder="Full Name">
+    </div>
 
-    <input id="custOTP" placeholder="Enter OTP" style="display:none;">
+    <div class="input-group">
+        <input id="custPhone" placeholder="Mobile Number">
+    </div>
 
-    <button id="saveBtn" onclick="saveCustomer()">Send OTP</button>
-    <button id="verifyBtn" onclick="verifyOTP()" style="display:none;">
-        Verify OTP
+    <div class="input-group">
+        <input id="custRoom" placeholder="Room Number">
+    </div>
+
+    <div class="input-group">
+        <input id="custOTP" placeholder="OTP" style="display:none">
+    </div>
+
+    <button id="sendOtpBtn" class="modal-btn primary-btn" onclick="sendOTP()">
+        Send OTP
     </button>
+
+    <button id="verifyOtpBtn" class="modal-btn secondary-btn" onclick="verifyOTP()" style="display:none">
+        Verify & Continue
+    </button>
+
   </div>
 </div>
 
+
 <script>
+/* ================= MENU DATA ================= */
 const dishes = [
     { id: 1, name: "Idly", price: 40, img: "assets/img/idly.jpg" },
     { id: 2, name: "Meals", price: 120, img: "assets/img/meals.jpg" },
@@ -273,87 +361,125 @@ let cart = JSON.parse(localStorage.getItem("cart")) || {};
 const menuDiv = document.getElementById("menu");
 
 /* ================= RENDER MENU ================= */
-dishes.forEach(d => {
-    const div = document.createElement("div");
-    div.className = "item";
-    div.innerHTML = `
-        <img src="${d.img}">
-        <h3>${d.name}</h3>
-        <div class="price">₹${d.price}</div>
-        <div class="qty-control">
-            <button onclick="updateQty(${d.id}, -1)">−</button>
-            <span>${cart[d.id]?.qty || 0}</span>
-            <button onclick="updateQty(${d.id}, 1)">+</button>
-        </div>`;
-    menuDiv.appendChild(div);
-});
+function renderMenu() {
+    menuDiv.innerHTML = "";
+    dishes.forEach(d => {
+        const qty = cart[d.id]?.qty || 0;
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+            <img src="${d.img}">
+            <h3>${d.name}</h3>
+            <div class="price">₹${d.price}</div>
+            <div class="qty-control">
+                <button onclick="updateQty(${d.id},-1)">−</button>
+                <span>${qty}</span>
+                <button onclick="updateQty(${d.id},1)">+</button>
+            </div>`;
+        menuDiv.appendChild(div);
+    });
+}
 
 function updateQty(id, c) {
     const d = dishes.find(x => x.id === id);
-    if (!cart[id]) cart[id] = {...d, qty:0};
+    if (!cart[id]) cart[id] = { ...d, qty: 0 };
     cart[id].qty += c;
     if (cart[id].qty <= 0) delete cart[id];
     localStorage.setItem("cart", JSON.stringify(cart));
+    renderMenu();
     renderCart();
 }
 
 function renderCart() {
-    const c = document.getElementById("cartItems");
     let total = 0;
-    c.innerHTML = "";
+    cartItems.innerHTML = "";
     for (let id in cart) {
         total += cart[id].qty * cart[id].price;
-        c.innerHTML += `<div>${cart[id].name} × ${cart[id].qty}</div>`;
+        cartItems.innerHTML += `<div>${cart[id].name} × ${cart[id].qty}</div>`;
     }
-    document.getElementById("totalPrice").innerText = total;
+    totalPrice.innerText = total;
+}
+
+/* ================= STEP NAV ================= */
+function goStep(step) {
+    if (step === 1) return;
+    if (step === 2) handleNext();
 }
 
 /* ================= OTP FLOW ================= */
-function openCustomerModal() {
+function handleNext() {
     if (!Object.keys(cart).length) {
         alert("Add items first");
         return;
     }
-
-    // ✅ Skip popup if OTP already verified
     if (localStorage.getItem("otp_verified") === "true") {
         window.location.href = "cart.html";
         return;
     }
-
     customerModal.style.display = "block";
-    custName.value  = localStorage.getItem("customer_name") || "";
-    custPhone.value = localStorage.getItem("customer_phone") || "";
-    custRoom.value  = localStorage.getItem("room_number") || "";
 }
 
-function saveCustomer() {
+function sendOTP() {
     if (!custName.value || !custPhone.value || !custRoom.value) {
         alert("Fill all details");
         return;
     }
-
     localStorage.setItem("customer_name", custName.value);
     localStorage.setItem("customer_phone", custPhone.value);
     localStorage.setItem("room_number", custRoom.value);
 
-    alert("OTP sent (demo OTP: 1234)");
+    alert("Demo OTP: 1234");
 
     custOTP.style.display = "block";
-    verifyBtn.style.display = "block";
-    saveBtn.style.display = "none";
+    verifyOtpBtn.style.display = "block";
+    sendOtpBtn.style.display = "none";
 }
+
+/* ================= KIOSK IDLE TIMER ================= */
+let idleTime = 0;
+const IDLE_LIMIT = 30; // seconds
+
+function resetIdleTimer() {
+    idleTime = 0;
+}
+
+// Detect any user interaction
+["mousemove", "mousedown", "touchstart", "scroll", "keydown"].forEach(event => {
+    document.addEventListener(event, resetIdleTimer, true);
+});
+
+// Count idle time
+setInterval(() => {
+    idleTime++;
+
+    if (idleTime >= IDLE_LIMIT) {
+        // Clear kiosk session
+        localStorage.removeItem("cart");
+        localStorage.removeItem("customer_name");
+        localStorage.removeItem("customer_phone");
+        localStorage.removeItem("room_number");
+        localStorage.removeItem("payment_method");
+        localStorage.removeItem("otp_verified");
+
+        // Redirect to home
+        window.location.href = "index.html";
+    }
+}, 1000);
 
 function verifyOTP() {
     if (custOTP.value !== "1234") {
         alert("Invalid OTP");
         return;
     }
-
     localStorage.setItem("otp_verified", "true");
     window.location.href = "cart.html";
 }
 
+function closeModal() {
+    customerModal.style.display = "none";
+}
+
+renderMenu();
 renderCart();
 </script>
 
