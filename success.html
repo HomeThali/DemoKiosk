@@ -2,137 +2,112 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Order Successful - HomeThali</title>
+<title>Payment Successful - HomeThali</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* ================= BODY ================= */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #f4f4f4;
-}
-
-/* ================= TOP BAR ================= */
-.topbar {
-    height: 70px;
-    background: #4CAF50;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 24px;
-}
-
-.brand {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-#topCustomer {
-    font-size: 18px;
-}
-
-/* ================= STEP BAR ================= */
-.step-wrapper {
-    background: #f5f7fa;
-    padding: 30px 20px;
-}
-
-.progress-bar {
-    position: relative;
-    max-width: 700px;
-    margin: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.progress-bar::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: #dcdcdc;
-    transform: translateY(-50%);
-}
-
-.progress-line {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    height: 4px;
-    background: #4CAF50;
-    transform: translateY(-50%);
-    width: 100%;
-}
-
-.step-circle {
-    width: 42px;
-    height: 42px;
-    background: white;
-    border: 3px solid #dcdcdc;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: #aaa;
-    z-index: 2;
-}
-
-.step-circle.active {
-    border-color: #4CAF50;
-    color: #4CAF50;
-}
-
-/* ================= SUCCESS CONTENT ================= */
-.page-content {
-    height: calc(100vh - 160px);
+    background: #f3f7f4;
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100vh;
 }
 
-.card {
+/* ================= SUCCESS CARD ================= */
+.success-card {
     background: white;
-    color: #333;
-    padding: 40px;
-    border-radius: 16px;
-    text-align: center;
     width: 90%;
-    max-width: 500px;
-    box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+    max-width: 420px;
+    padding: 35px 30px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
 }
 
-.card h1 {
+/* ================= ANIMATION ================= */
+.checkmark-wrapper {
+    width: 90px;
+    height: 90px;
+    margin: auto;
+    border-radius: 50%;
+    background: #4CAF50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: pop 0.5s ease;
+}
+
+.checkmark {
+    width: 30px;
+    height: 55px;
+    border-right: 6px solid white;
+    border-bottom: 6px solid white;
+    transform: rotate(45deg);
+}
+
+@keyframes pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* ================= TEXT ================= */
+h1 {
     color: #4CAF50;
-    margin-bottom: 10px;
+    margin: 18px 0 8px;
 }
 
-.token {
-    font-size: 40px;
-    font-weight: bold;
-    margin: 20px 0;
-    color: #4CAF50;
+.subtext {
+    color: #666;
+    font-size: 15px;
 }
 
+/* ================= DETAILS ================= */
 .details {
-    font-size: 18px;
-    margin: 10px 0;
+    margin-top: 25px;
+    text-align: left;
 }
 
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed #ddd;
+    font-size: 15px;
+}
 
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    color: #777;
+}
+
+.value {
+    font-weight: bold;
+}
+
+/* ================= TOKEN ================= */
+.token {
+    margin: 20px 0;
+    font-size: 34px;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+/* ================= BUTTON ================= */
 .home-btn {
-    margin-top: 20px;
-    padding: 14px 30px;
-    font-size: 20px;
+    margin-top: 25px;
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
     background: #4CAF50;
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
 }
 
@@ -140,70 +115,61 @@ body {
     transform: scale(0.97);
 }
 
+/* ================= TIMER ================= */
 .timer {
-    margin-top: 20px;
-    font-size: 16px;
-    opacity: 0.8;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #777;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ================= TOP BAR ================= -->
-<div class="topbar">
-    <div class="brand">HomeThali </div>
-    <div id="topCustomer"></div>
-</div>
+<div class="success-card">
 
-<!-- ================= STEP BAR (5 STEPS) ================= -->
-<div class="step-wrapper">
-    <div class="progress-bar">
-        <div class="progress-line"></div>
-        <div class="step-circle">1</div>
-        <div class="step-circle">2</div>
-        <div class="step-circle">3</div>
-        <div class="step-circle">4</div>
-        <div class="step-circle active">5</div>
+    <!-- Animation -->
+    <div class="checkmark-wrapper">
+        <div class="checkmark"></div>
     </div>
-</div>
 
-<!-- ================= PAGE CONTENT ================= -->
-<div class="page-content">
+    <h1>Payment Successful</h1>
+    <div class="subtext">Thank you for ordering with HomeThali</div>
 
-    <div class="card">
-        <h1>Order Placed Successfully 🎉</h1>
-        <p>Please note your token number</p>
+    <!-- Token -->
+    <div class="token" id="tokenNo">HT000</div>
 
-        <div class="token" id="tokenNo">HT001</div>
-
-        <div class="details">
-            <strong id="custName"></strong><br>
-            Room: <span id="custRoom"></span><br>
-            Payment: <span id="paymentMethod"></span>
+    <!-- Order Details -->
+    <div class="details">
+        <div class="detail-row">
+            <span class="label">Customer</span>
+            <span class="value" id="custName"></span>
         </div>
-
-        <button class="home-btn" onclick="goHome()">
-    Go to Home
-</button>
-
-
-        <div class="timer">
-            Redirecting to home in <span id="countdown">30</span> seconds…
+        <div class="detail-row">
+            <span class="label">Room</span>
+            <span class="value" id="custRoom"></span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Payment</span>
+            <span class="value" id="paymentMethod"></span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Amount Paid</span>
+            <span class="value">₹ <span id="totalAmount"></span></span>
         </div>
     </div>
 
+    <button class="home-btn" onclick="goHome()">New Order</button>
+
+    <div class="timer">
+        Redirecting in <span id="countdown">15</span> seconds
+    </div>
 </div>
 
 <script>
-/* ================= CUSTOMER DETAILS ================= */
-const cname = localStorage.getItem("customer_name");
-if (cname) {
-    document.getElementById("topCustomer").innerText = cname;
-    document.getElementById("custName").innerText = cname;
-} else {
-    document.getElementById("custName").innerText = "Customer";
-}
+/* ================= LOAD DATA ================= */
+document.getElementById("custName").innerText =
+    localStorage.getItem("customer_name") || "Customer";
 
 document.getElementById("custRoom").innerText =
     localStorage.getItem("room_number") || "-";
@@ -211,27 +177,35 @@ document.getElementById("custRoom").innerText =
 document.getElementById("paymentMethod").innerText =
     localStorage.getItem("payment_method") || "-";
 
+/* ================= TOTAL ================= */
+const cart = JSON.parse(localStorage.getItem("cart")) || {};
+let total = 0;
+for (let id in cart) {
+    total += cart[id].qty * cart[id].price;
+}
+document.getElementById("totalAmount").innerText = total;
+
 /* ================= TOKEN ================= */
 const token = "HT" + Math.floor(100 + Math.random() * 900);
 document.getElementById("tokenNo").innerText = token;
 
-
-function goHome() {
-    // Clear kiosk data
+/* ================= RESET & HOME ================= */
+function clearSession() {
     localStorage.removeItem("cart");
-    localStorage.removeItem("payment_method");
     localStorage.removeItem("customer_name");
     localStorage.removeItem("customer_phone");
     localStorage.removeItem("room_number");
+    localStorage.removeItem("payment_method");
+    localStorage.removeItem("otp_verified");
+}
 
-    // Go to home screen
+function goHome() {
+    clearSession();
     window.location.href = "index.html";
 }
 
-
-
-/* ================= AUTO RESET ================= */
-let timeLeft = 30;
+/* ================= AUTO REDIRECT ================= */
+let timeLeft = 15;
 const timer = document.getElementById("countdown");
 
 const interval = setInterval(() => {
@@ -240,14 +214,7 @@ const interval = setInterval(() => {
 
     if (timeLeft <= 0) {
         clearInterval(interval);
-
-        localStorage.removeItem("cart");
-        localStorage.removeItem("payment_method");
-        localStorage.removeItem("customer_name");
-        localStorage.removeItem("customer_phone");
-        localStorage.removeItem("room_number");
-
-        window.location.href = "index.html";
+        goHome();
     }
 }, 1000);
 </script>

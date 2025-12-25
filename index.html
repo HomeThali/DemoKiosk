@@ -64,7 +64,7 @@
 
     <img src="assets/img/LogoMain.png" alt="HomeThali Logo" class="logo">
 
-    <h1>HomeThali </h1>
+    <h1>HomeThali</h1>
     <p>Healthy Home-Cooked Meals</p>
 
     <button class="start-btn" onclick="startOrder()">
@@ -76,6 +76,15 @@
 
 <script>
 function startOrder() {
+    // ✅ CLEAR PREVIOUS ORDER DATA (VERY IMPORTANT)
+    localStorage.removeItem("cart");
+    localStorage.removeItem("customer_name");
+    localStorage.removeItem("customer_phone");
+    localStorage.removeItem("room_number");
+    localStorage.removeItem("payment_method");
+    localStorage.removeItem("otp_verified");
+
+    // ✅ START FRESH ORDER
     window.location.href = "menu.html";
 }
 </script>

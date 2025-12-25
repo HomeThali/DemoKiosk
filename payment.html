@@ -18,11 +18,9 @@ body {
     background: #4CAF50;
     color: white;
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 0 24px;
 }
-
 .brand {
     font-size: 24px;
     font-weight: bold;
@@ -33,7 +31,6 @@ body {
     background: #f5f7fa;
     padding: 30px 20px;
 }
-
 .progress-bar {
     position: relative;
     max-width: 600px;
@@ -41,7 +38,6 @@ body {
     display: flex;
     justify-content: space-between;
 }
-
 .progress-bar::before {
     content: "";
     position: absolute;
@@ -52,7 +48,6 @@ body {
     background: #dcdcdc;
     transform: translateY(-50%);
 }
-
 .progress-line {
     position: absolute;
     top: 50%;
@@ -62,7 +57,6 @@ body {
     transform: translateY(-50%);
     width: 66%;
 }
-
 .step-circle {
     width: 42px;
     height: 42px;
@@ -76,12 +70,10 @@ body {
     color: #aaa;
     cursor: pointer;
 }
-
 .step-circle.active {
     border-color: #4CAF50;
     color: #4CAF50;
 }
-
 .step-circle.disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -89,71 +81,102 @@ body {
 
 /* ================= PAGE CONTENT ================= */
 .page-content {
-    max-width: 720px;
+    max-width: 700px;
     margin: auto;
     padding: 20px;
 }
-
 .card {
     background: white;
-    padding: 22px;
+    padding: 20px;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     margin-bottom: 20px;
     text-align: center;
 }
-
 .total {
     font-size: 28px;
     font-weight: bold;
     margin: 15px 0;
 }
 
-/* ================= PAYMENT OPTIONS ================= */
-.pay-options {
+/* ================= PAYMENT GRID ================= */
+.pay-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 18px;
+    margin-top: 20px;
 }
 
-.pay-option {
-    padding: 22px;
-    border: 2px solid #4CAF50;
-    border-radius: 14px;
+/* ================= PAYMENT CARD ================= */
+.pay-card {
+    background: white;
+    border: 2.5px solid #4CAF50;
+    border-radius: 18px;
+    height: 140px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Hover / Touch Feedback */
+.pay-card:hover,
+.pay-card:active {
+    background: #4CAF50;
+    transform: scale(0.96);
+}
+
+/* ================= ICON ================= */
+.pay-icon {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+/* ================= TEXT ================= */
+.pay-text {
     font-size: 20px;
     font-weight: bold;
-    background: #fff;
+    text-align: center;
+    color: #2e2e2e;
 }
 
-.pay-option:active {
-    transform: scale(0.97);
-    background: #4CAF50;
+/* Change text color on hover */
+.pay-card:hover .pay-text,
+.pay-card:hover .pay-icon {
     color: white;
 }
+
 </style>
 </head>
 
 <body>
 
-<!-- ================= TOP BAR ================= -->
+<!-- ================= SAFETY CHECK ================= -->
+<script>
+if (localStorage.getItem("otp_verified") !== "true") {
+    window.location.href = "menu.html";
+}
+</script>
+
 <div class="topbar">
     <div class="brand">HomeThali</div>
 </div>
 
-<!-- ================= STEP BAR ================= -->
+<!-- STEP BAR -->
 <div class="step-wrapper">
     <div class="progress-bar">
         <div class="progress-line"></div>
-
         <div class="step-circle" data-step="1">1</div>
         <div class="step-circle" data-step="2">2</div>
         <div class="step-circle active" data-step="3">3</div>
-        <div class="step-circle" data-step="4">4</div>
+        <div class="step-circle disabled">4</div>
     </div>
 </div>
 
-<!-- ================= PAGE CONTENT ================= -->
 <div class="page-content">
 
     <!-- CUSTOMER + TOTAL -->
@@ -167,66 +190,92 @@ body {
     </div>
 
     <!-- PAYMENT OPTIONS -->
-    <div class="card">
-        <h3>Select Payment Method</h3>
-
-        <div class="pay-options">
-            <div class="pay-option" onclick="selectPayment('UPI')">UPI</div>
-            <div class="pay-option" onclick="selectPayment('CASH')">Cash</div>
-            <div class="pay-option" onclick="selectPayment('DEBIT_CARD')">Debit Card</div>
-            <div class="pay-option" onclick="selectPayment('CREDIT_CARD')">Credit Card</div>
-            <div class="pay-option" onclick="selectPayment('PAY_ON_DELIVERY')">Pay on Delivery</div>
-        </div>
+    <div class="pay-grid">
+    <div class="pay-card" onclick="selectPayment('UPI')">
+        <span class="pay-icon">📱</span>
+        <span class="pay-text">UPI</span>
     </div>
+
+    <div class="pay-card" onclick="selectPayment('CREDIT_CARD')">
+        <span class="pay-icon">💳</span>
+        <span class="pay-text">Credit Card</span>
+    </div>
+
+    <div class="pay-card" onclick="selectPayment('DEBIT_CARD')">
+        <span class="pay-icon">💳</span>
+        <span class="pay-text">Debit Card</span>
+    </div>
+
+    <div class="pay-card" onclick="selectPayment('COD')">
+        <span class="pay-icon">🚚</span>
+        <span class="pay-text">Pay on Delivery</span>
+    </div>
+</div>
+
 
 </div>
 
 <script>
-/* ================= STEP CONTROL ================= */
-const currentStep = 3;
-
 /* ================= STEP NAVIGATION ================= */
 const stepPages = {
     1: "menu.html",
-    2: "cart.html",
-    3: "payment.html",
-    4: "success.html"
+    2: "cart.html"
 };
 
-document.querySelectorAll(".step-circle").forEach(stepEl => {
-    const stepNum = parseInt(stepEl.dataset.step);
-
-    if (stepNum <= currentStep) {
-        stepEl.addEventListener("click", () => {
-            if (stepNum !== currentStep) {
-                window.location.href = stepPages[stepNum];
-            }
-        });
-    } else {
-        stepEl.classList.add("disabled");
+document.querySelectorAll(".step-circle").forEach(step => {
+    const num = step.dataset.step;
+    if (stepPages[num]) {
+        step.onclick = () => window.location.href = stepPages[num];
     }
 });
 
 /* ================= CUSTOMER DETAILS ================= */
-document.getElementById("custName").innerText =
-    localStorage.getItem("customer_name") || "Customer";
-
-document.getElementById("custRoom").innerText =
-    localStorage.getItem("room_number") || "-";
+custName.innerText = localStorage.getItem("customer_name") || "Customer";
+custRoom.innerText = localStorage.getItem("room_number") || "-";
 
 /* ================= TOTAL ================= */
 const cart = JSON.parse(localStorage.getItem("cart")) || {};
 let total = 0;
-for (let id in cart) {
-    total += cart[id].qty * cart[id].price;
-}
-document.getElementById("totalAmount").innerText = total;
+for (let id in cart) total += cart[id].qty * cart[id].price;
+totalAmount.innerText = total;
 
 /* ================= PAYMENT ================= */
 function selectPayment(method) {
     localStorage.setItem("payment_method", method);
     window.location.href = "success.html";
 }
+
+/* ================= KIOSK IDLE TIMER ================= */
+let idleTime = 0;
+const IDLE_LIMIT = 40; // seconds
+
+function resetIdleTimer() {
+    idleTime = 0;
+}
+
+// Detect any user interaction
+["mousemove", "mousedown", "touchstart", "scroll", "keydown"].forEach(event => {
+    document.addEventListener(event, resetIdleTimer, true);
+});
+
+// Count idle time
+setInterval(() => {
+    idleTime++;
+
+    if (idleTime >= IDLE_LIMIT) {
+        // Clear kiosk session
+        localStorage.removeItem("cart");
+        localStorage.removeItem("customer_name");
+        localStorage.removeItem("customer_phone");
+        localStorage.removeItem("room_number");
+        localStorage.removeItem("payment_method");
+        localStorage.removeItem("otp_verified");
+
+        // Redirect to home
+        window.location.href = "index.html";
+    }
+}, 1000);
+
 </script>
 
 </body>
