@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* ================= BODY ================= */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -19,7 +18,6 @@ body {
     background: #4CAF50;
     color: white;
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 0 24px;
 }
@@ -27,10 +25,6 @@ body {
 .brand {
     font-size: 24px;
     font-weight: bold;
-}
-
-#topCustomer {
-    font-size: 18px;
 }
 
 /* ================= STEP BAR ================= */
@@ -41,11 +35,10 @@ body {
 
 .progress-bar {
     position: relative;
-    max-width: 700px;
+    max-width: 600px;
     margin: auto;
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
 .progress-bar::before {
@@ -66,7 +59,7 @@ body {
     height: 4px;
     background: #4CAF50;
     transform: translateY(-50%);
-    width: 50%;
+    width: 33%;
 }
 
 .step-circle {
@@ -80,21 +73,11 @@ body {
     justify-content: center;
     font-weight: bold;
     color: #aaa;
-    z-index: 2;
 }
 
 .step-circle.active {
     border-color: #4CAF50;
     color: #4CAF50;
-}
-
-.step-circle {
-    cursor: pointer;
-}
-
-.step-circle.disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
 }
 
 /* ================= PAGE CONTENT ================= */
@@ -107,10 +90,19 @@ body {
 /* ================= CUSTOMER INFO ================= */
 .customer-info {
     background: white;
-    padding: 15px;
+    padding: 20px;
     border-radius: 10px;
     margin-bottom: 20px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.customer-info h3 {
+    margin-top: 0;
+    color: #4CAF50;
+}
+
+.customer-info p {
+    margin: 6px 0;
 }
 
 /* ================= CART ITEMS ================= */
@@ -121,17 +113,7 @@ body {
     margin-bottom: 15px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.item-left {
-    flex: 2;
-}
-
-.item-right {
-    flex: 1;
-    text-align: right;
 }
 
 .qty-control {
@@ -177,31 +159,29 @@ body {
 
 <!-- ================= TOP BAR ================= -->
 <div class="topbar">
-    <div class="brand">HomeThali </div>
-    <div id="topCustomer"></div>
+    <div class="brand">HomeThali</div>
 </div>
 
-<!-- ================= STEP BAR (5 STEPS) ================= -->
+<!-- ================= STEP BAR ================= -->
 <div class="step-wrapper">
     <div class="progress-bar">
-        <div class="progress-line" id="progressLine"></div>
-        <div class="step-circle" data-step="1">1</div>
-<div class="step-circle" data-step="2">2</div>
-<div class="step-circle active" data-step="3">3</div>
-<div class="step-circle" data-step="4">4</div>
-<div class="step-circle" data-step="5">5</div>
-
+        <div class="progress-line"></div>
+        <div class="step-circle">1</div>
+        <div class="step-circle active">2</div>
+        <div class="step-circle">3</div>
+        <div class="step-circle">4</div>
     </div>
 </div>
 
 <!-- ================= PAGE CONTENT ================= -->
 <div class="page-content">
 
-    <!-- CUSTOMER DETAILS -->
+    <!-- CUSTOMER DETAILS (READ ONLY) -->
     <div class="customer-info">
-        <strong id="custName"></strong><br>
-        Phone: <span id="custPhone"></span><br>
-        Room: <span id="custRoom"></span>
+        <h3>Customer Details</h3>
+        <p><strong>Name:</strong> <span id="custName"></span></p>
+        <p><strong>Phone:</strong> <span id="custPhone"></span></p>
+        <p><strong>Room:</strong> <span id="custRoom"></span></p>
     </div>
 
     <!-- CART ITEMS -->
@@ -216,22 +196,13 @@ body {
 </div>
 
 <script>
-/* ================= STEP CONTROL ================= */
-const currentStep = 3;
-const totalSteps = 5;
-
-document.getElementById("progressLine").style.width =
-    ((currentStep - 1) / (totalSteps - 1)) * 100 + "%";
-
-/* ================= CUSTOMER DETAILS ================= */
-const cname = localStorage.getItem("customer_name");
-if (cname) {
-    document.getElementById("topCustomer").innerText = cname;
-    document.getElementById("custName").innerText = "Customer: " + cname;
-}
+/* ================= LOAD CUSTOMER DETAILS ================= */
+document.getElementById("custName").innerText =
+    localStorage.getItem("customer_name") || "-";
 
 document.getElementById("custPhone").innerText =
     localStorage.getItem("customer_phone") || "-";
+
 document.getElementById("custRoom").innerText =
     localStorage.getItem("room_number") || "-";
 
@@ -256,7 +227,7 @@ function renderCart() {
 
         cartDiv.innerHTML += `
             <div class="cart-item">
-                <div class="item-left">
+                <div>
                     <strong>${item.name}</strong><br>
                     ₹${item.price} × ${item.qty}
                     <div class="qty-control">
@@ -265,9 +236,7 @@ function renderCart() {
                         <button onclick="updateQty(${id}, 1)">+</button>
                     </div>
                 </div>
-                <div class="item-right">
-                    ₹${itemTotal}
-                </div>
+                <div>₹${itemTotal}</div>
             </div>
         `;
     }
@@ -283,41 +252,7 @@ function updateQty(id, change) {
     renderCart();
 }
 
-/* -------- STEP CONFIG -------- */
-const stepPages = {
-    1: "customer_detail.html",
-    2: "menu.html",
-    3: "cart.html",
-    4: "payment.html",
-    5: "success.html"
-};
-
-/* -------- SET CURRENT STEP PER PAGE -------- */
-// EXAMPLES:
-// customer_detail.html → const currentStep = 1;
-// menu.html           → const currentStep = 2;
-// cart.html           → const currentStep = 3;
-// payment.html        → const currentStep = 4;
-// success.html        → const currentStep = 5;
-
-/* -------- CLICKABLE STEP LOGIC -------- */
-document.querySelectorAll(".step-circle").forEach(stepEl => {
-    const stepNum = parseInt(stepEl.dataset.step);
-
-    if (stepNum <= currentStep) {
-        // Previous or current step → clickable
-        stepEl.classList.remove("disabled");
-
-        stepEl.addEventListener("click", () => {
-            if (stepNum !== currentStep) {
-                window.location.href = stepPages[stepNum];
-            }
-        });
-    } else {
-        // Future step → disabled
-        stepEl.classList.add("disabled");
-    }
-});
+/* ================= NEXT ================= */
 function goToPayment() {
     if (!Object.keys(cart).length) {
         alert("Cart is empty");
