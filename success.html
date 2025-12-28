@@ -163,15 +163,19 @@ document.getElementById("totalAmount").innerText = total;
 
 /* ================= TOKEN ================= */
 let token = localStorage.getItem("order_id");
+
 if (!token) {
-    token = "HT" + Date.now(); // 🔥 unique always
-    sessionStorage.setItem("order_id", token);
+    const tokenNumber = Math.floor(100 + Math.random() * 900); // 100–999
+    token = "HT" + tokenNumber;
+    localStorage.setItem("order_id", token);
 }
+
 document.getElementById("tokenNo").innerText = token;
+
 
 /* ================= SAVE ORDER (ONCE) ================= */
 if (!localStorage.getItem("order_saved")) {
-    fetch("api/save_order.php", {
+    fetch("api/save-order.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
