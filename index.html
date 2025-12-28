@@ -6,55 +6,67 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-    body {
-        margin: 0;
-        height: 100vh;
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #84D160, #4CAF50);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-    }
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #84D160, #4CAF50);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
 
-    .container {
-        text-align: center;
-    }
+.container {
+    text-align: center;
+}
 
-    .logo {
-        width: 140px;
-        margin-bottom: 20px;
-    }
+.logo {
+    width: 140px;
+    margin-bottom: 20px;
+}
 
-    h1 {
-        font-size: 48px;
-        margin-bottom: 10px;
-    }
+h1 {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
 
-    p {
-        font-size: 20px;
-        margin-bottom: 40px;
-    }
+p {
+    font-size: 20px;
+    margin-bottom: 40px;
+}
 
-    .start-btn {
-        background: white;
-        color: #4CAF50;
-        font-size: 32px;
-        padding: 20px 60px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-    }
+.start-btn {
+    background: white;
+    color: #4CAF50;
+    font-size: 32px;
+    padding: 20px 60px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
 
-    .start-btn:active {
-        transform: scale(0.95);
-    }
+.start-btn:active {
+    transform: scale(0.95);
+}
 
-    .hint {
-        margin-top: 20px;
-        font-size: 16px;
-        opacity: 0.9;
-    }
+.admin-btn {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    background: rgba(255,255,255,0.9);
+    color: #4CAF50;
+    border: none;
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.admin-btn:active {
+    transform: scale(0.95);
+}
 </style>
 </head>
 
@@ -71,12 +83,14 @@
         START ORDER
     </button>
 
-    
+    <!-- Admin Login -->
+    <button class="admin-btn" onclick="openAdmin()">Admin</button>
+
 </div>
 
 <script>
 function startOrder() {
-    // ✅ CLEAR PREVIOUS ORDER DATA (VERY IMPORTANT)
+    // ✅ CLEAR ONLY ORDER SESSION (SAFE)
     localStorage.removeItem("cart");
     localStorage.removeItem("customer_name");
     localStorage.removeItem("customer_phone");
@@ -84,8 +98,11 @@ function startOrder() {
     localStorage.removeItem("payment_method");
     localStorage.removeItem("otp_verified");
 
-    // ✅ START FRESH ORDER
     window.location.href = "menu.html";
+}
+
+function openAdmin() {
+    window.location.href = "admin/login.php";
 }
 </script>
 
