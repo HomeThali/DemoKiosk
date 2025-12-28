@@ -16,7 +16,6 @@ body {
     height: 100vh;
 }
 
-/* ================= SUCCESS CARD ================= */
 .success-card {
     background: white;
     width: 90%;
@@ -27,7 +26,6 @@ body {
     box-shadow: 0 15px 40px rgba(0,0,0,0.2);
 }
 
-/* ================= ANIMATION ================= */
 .checkmark-wrapper {
     width: 90px;
     height: 90px;
@@ -49,11 +47,10 @@ body {
 }
 
 @keyframes pop {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+    from { transform: scale(0.6); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
-/* ================= TEXT ================= */
 h1 {
     color: #4CAF50;
     margin: 18px 0 8px;
@@ -64,9 +61,15 @@ h1 {
     font-size: 15px;
 }
 
-/* ================= DETAILS ================= */
+.token {
+    margin: 20px 0;
+    font-size: 34px;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
 .details {
-    margin-top: 25px;
+    margin-top: 20px;
     text-align: left;
 }
 
@@ -75,30 +78,12 @@ h1 {
     justify-content: space-between;
     padding: 10px 0;
     border-bottom: 1px dashed #ddd;
-    font-size: 15px;
 }
 
 .detail-row:last-child {
     border-bottom: none;
 }
 
-.label {
-    color: #777;
-}
-
-.value {
-    font-weight: bold;
-}
-
-/* ================= TOKEN ================= */
-.token {
-    margin: 20px 0;
-    font-size: 34px;
-    color: #4CAF50;
-    font-weight: bold;
-}
-
-/* ================= BUTTON ================= */
 .home-btn {
     margin-top: 25px;
     width: 100%;
@@ -111,11 +96,6 @@ h1 {
     cursor: pointer;
 }
 
-.home-btn:active {
-    transform: scale(0.97);
-}
-
-/* ================= TIMER ================= */
 .timer {
     margin-top: 15px;
     font-size: 14px;
@@ -128,7 +108,6 @@ h1 {
 
 <div class="success-card">
 
-    <!-- Animation -->
     <div class="checkmark-wrapper">
         <div class="checkmark"></div>
     </div>
@@ -136,26 +115,24 @@ h1 {
     <h1>Payment Successful</h1>
     <div class="subtext">Thank you for ordering with HomeThali</div>
 
-    <!-- Token -->
-    <div class="token" id="tokenNo">HT000</div>
+    <div class="token" id="tokenNo"></div>
 
-    <!-- Order Details -->
     <div class="details">
         <div class="detail-row">
-            <span class="label">Customer</span>
-            <span class="value" id="custName"></span>
+            <span>Customer</span>
+            <strong id="custName"></strong>
         </div>
         <div class="detail-row">
-            <span class="label">Room</span>
-            <span class="value" id="custRoom"></span>
+            <span>Room</span>
+            <strong id="custRoom"></strong>
         </div>
         <div class="detail-row">
-            <span class="label">Payment</span>
-            <span class="value" id="paymentMethod"></span>
+            <span>Payment</span>
+            <strong id="paymentMethod"></strong>
         </div>
         <div class="detail-row">
-            <span class="label">Amount Paid</span>
-            <span class="value">₹ <span id="totalAmount"></span></span>
+            <span>Amount Paid</span>
+            <strong>₹ <span id="totalAmount"></span></strong>
         </div>
     </div>
 
@@ -168,17 +145,16 @@ h1 {
 
 <script>
 /* ================= LOAD DATA ================= */
-document.getElementById("custName").innerText =
-    localStorage.getItem("customer_name") || "Customer";
+const customerName = localStorage.getItem("customer_name") || "Customer";
+const customerRoom = localStorage.getItem("room_number") || "-";
+const paymentMethod = localStorage.getItem("payment_method") || "-";
+const cart = JSON.parse(localStorage.getItem("cart")) || {};
 
-document.getElementById("custRoom").innerText =
-    localStorage.getItem("room_number") || "-";
-
-document.getElementById("paymentMethod").innerText =
-    localStorage.getItem("payment_method") || "-";
+document.getElementById("custName").innerText = customerName;
+document.getElementById("custRoom").innerText = customerRoom;
+document.getElementById("paymentMethod").innerText = paymentMethod;
 
 /* ================= TOTAL ================= */
-const cart = JSON.parse(localStorage.getItem("cart")) || {};
 let total = 0;
 for (let id in cart) {
     total += cart[id].qty * cart[id].price;
@@ -186,17 +162,47 @@ for (let id in cart) {
 document.getElementById("totalAmount").innerText = total;
 
 /* ================= TOKEN ================= */
-const token = "HT" + Math.floor(100 + Math.random() * 900);
+let token = localStorage.getItem("order_id");
+if (!token) {
+    token = "HT" + Date.now(); // 🔥 unique always
+    sessionStorage.setItem("order_id", token);
+}
 document.getElementById("tokenNo").innerText = token;
+
+/* ================= SAVE ORDER (ONCE) ================= */
+if (!localStorage.getItem("order_saved")) {
+    fetch("api/save_order.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            order_id: token,
+            customer: {
+                name: customerName,
+                phone: localStorage.getItem("customer_phone"),
+                room: customerRoom
+            },
+            cart: cart,
+            payment_method: paymentMethod,
+            total_amount: total
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            localStorage.setItem("order_saved", "true");
+        } else {
+            alert("Order save failed. Please contact staff.");
+        }
+    })
+    .catch(() => alert("Server error while saving order"));
+}
 
 /* ================= RESET & HOME ================= */
 function clearSession() {
-    localStorage.removeItem("cart");
-    localStorage.removeItem("customer_name");
-    localStorage.removeItem("customer_phone");
-    localStorage.removeItem("room_number");
-    localStorage.removeItem("payment_method");
-    localStorage.removeItem("otp_verified");
+    [
+        "cart","customer_name","customer_phone","room_number",
+        "payment_method","otp_verified","order_saved","order_id"
+    ].forEach(k => localStorage.removeItem(k));
 }
 
 function goHome() {
@@ -211,7 +217,6 @@ const timer = document.getElementById("countdown");
 const interval = setInterval(() => {
     timeLeft--;
     timer.innerText = timeLeft;
-
     if (timeLeft <= 0) {
         clearInterval(interval);
         goHome();
